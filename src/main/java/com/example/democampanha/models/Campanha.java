@@ -4,6 +4,7 @@ import com.example.democampanha.models.enums.TimeCoracao;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -20,10 +21,10 @@ public class Campanha {
         private Long id;
         private String nome;
         private Integer idTimeCoracao;
-        private Date dataInicioVigencia;
-        private Date dataFimVigencia;
+        private LocalDate dataInicioVigencia;
+        private LocalDate dataFimVigencia;
 
-        public Campanha(Long id, String nome, TimeCoracao timeCoracao, Date dataInicioVigencia, Date dataFimVigencia) {
+        public Campanha(Long id, String nome, TimeCoracao timeCoracao, LocalDate dataInicioVigencia, LocalDate dataFimVigencia) {
                 this.id = id;
                 this.nome = nome;
                 setTimeCoracao(timeCoracao);
