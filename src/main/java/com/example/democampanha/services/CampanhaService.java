@@ -26,7 +26,6 @@ public class CampanhaService {
     }
 
     public Campanha insert(Campanha campanha){
-        verificaDataFimVigencia(campanha.getDataFimVigencia());
         return campanhaRepository.save(campanha);
     }
 
@@ -39,18 +38,6 @@ public class CampanhaService {
         return campanhaRepository.save(obj);
     }
 
-    public void verificaDataFimVigencia(LocalDate dataFimVigencia) {
-        List<Campanha> campanhas = new ArrayList<>();
-        campanhas = campanhaRepository.findAll();
 
-        for (Campanha camp : campanhas) {
-            if (camp.getDataFimVigencia().isEqual(dataFimVigencia)) {
-                LocalDate dataAuxiliar = camp.getDataFimVigencia();
-                dataAuxiliar = dataAuxiliar.plusDays(1);
-                camp.setDataFimVigencia(dataAuxiliar);
-                campanhaRepository.save(camp);
-            }
-        }
-    }
 
 }
