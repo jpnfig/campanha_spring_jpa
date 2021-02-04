@@ -24,12 +24,18 @@ public class Campanha {
         private LocalDate dataInicioVigencia;
         private LocalDate dataFimVigencia;
 
-        public Campanha(Long id, String nome, TimeCoracao timeCoracao, LocalDate dataInicioVigencia, LocalDate dataFimVigencia) {
+        @ManyToOne
+        @JoinColumn(name = "cliente_id")
+        private Cliente cliente;
+
+        public Campanha(Long id, String nome, TimeCoracao timeCoracao, LocalDate dataInicioVigencia,
+                        LocalDate dataFimVigencia, Cliente cliente) {
                 this.id = id;
                 this.nome = nome;
                 setTimeCoracao(timeCoracao);
                 this.dataInicioVigencia = dataInicioVigencia;
                 this.dataFimVigencia = dataFimVigencia;
+                this.cliente = cliente;
         }
 
         public TimeCoracao getTimeCoracao() {

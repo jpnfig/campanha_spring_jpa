@@ -31,9 +31,16 @@ public class ClienteResource {
 
     @PostMapping
     public ResponseEntity<Cliente> insert(@RequestBody Cliente obj){
-        obj = clienteService.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).body(obj);
+        List<Cliente> list = clienteService.findAll();
+        boolean resp = validaExisteCadastroCliente(list, obj);
+        if (resp){
+            return ResponseEntity.ok().build();
+        }else{
+            obj = clienteService.insert(obj);
+            URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").
+                      buildAndExpand(obj.getId()).toUri();
+            return ResponseEntity.created(uri).body(obj);
+        }
     }
 
     @DeleteMapping(value = "/{id}")
@@ -46,6 +53,16 @@ public class ClienteResource {
     public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente obj){
         obj = clienteService.update(id, obj);
         return ResponseEntity.ok().body(obj);
+    }
+
+    private boolean validaExisteCadastroCliente(List<Cliente> list, Cliente obj){
+        for(Cliente cliente : list){
+            if (cliente.getEmail().equals(obj.getEmail())){
+                System.out.println("Cliente com cadastro já efetuado!");
+                return true;
+            }
+        }
+        return false;
     }
 
 }
