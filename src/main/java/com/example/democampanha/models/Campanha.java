@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "tb_campanhas")
@@ -24,7 +23,7 @@ public class Campanha {
         private LocalDate dataInicioVigencia;
         private LocalDate dataFimVigencia;
 
-        @ManyToOne
+        @ManyToMany
         @JoinColumn(name = "cliente_id")
         private Cliente cliente;
 
@@ -36,10 +35,6 @@ public class Campanha {
                 this.dataInicioVigencia = dataInicioVigencia;
                 this.dataFimVigencia = dataFimVigencia;
                 this.cliente = cliente;
-        }
-
-        public TimeCoracao getTimeCoracao() {
-                return TimeCoracao.valueOf(idTimeCoracao);
         }
 
         private void setTimeCoracao(TimeCoracao timeCoracao) {
