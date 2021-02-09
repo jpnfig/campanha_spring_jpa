@@ -26,29 +26,29 @@ public class TestConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        Cliente cli1 = new Cliente(null, "Joao Nobrega", "joao@gmail.com",
-                LocalDate.of(1990, 03, 15), TimeCoracao.SAO_PAULO);
-
-        clienteRepository.saveAll(Arrays.asList(cli1));
-
-        Campanha camp1 = new Campanha(null, "Campanha nº1 do Joao", TimeCoracao.SAO_PAULO,
-                LocalDate.of(2020, 12, 01),
-                LocalDate.of(2020, 12, 31), cli1);
-
-        Campanha camp2 = new Campanha(null, "Campanha nº2 do Joao", TimeCoracao.SAO_PAULO,
-                LocalDate.of(2021, 02, 01),
-                LocalDate.of(2021, 02, 03), cli1);
-
-        Campanha camp3 = new Campanha(null, "Campanha nº3 do Joao", TimeCoracao.SAO_PAULO,
-                LocalDate.of(2021, 02, 01),
-                LocalDate.of(2021, 02, 03), cli1);
-
-        if (camp2.getDataFimVigencia().isEqual(camp3.getDataFimVigencia())) {
-            LocalDate dataAuxiliar = camp2.getDataFimVigencia();
-            camp2.setDataFimVigencia(dataAuxiliar.plusDays(1));
-        }
-
-        campanhaRepository.saveAll(Arrays.asList(camp1, camp2, camp3));
+//        Cliente cli1 = new Cliente(null, "Joao Nobrega", "joao@gmail.com",
+//                LocalDate.of(1990, 03, 15), TimeCoracao.SAO_PAULO);
+//
+//        clienteRepository.saveAll(Arrays.asList(cli1));
+//
+//        Campanha camp1 = new Campanha(null, "Campanha nº1 do Joao", TimeCoracao.SAO_PAULO,
+//                LocalDate.of(2020, 12, 01),
+//                LocalDate.of(2020, 12, 31), cli1);
+//
+//        Campanha camp2 = new Campanha(null, "Campanha nº2 do Joao", TimeCoracao.SAO_PAULO,
+//                LocalDate.of(2021, 02, 01),
+//                LocalDate.of(2021, 02, 03), cli1);
+//
+//        Campanha camp3 = new Campanha(null, "Campanha nº3 do Joao", TimeCoracao.SAO_PAULO,
+//                LocalDate.of(2021, 02, 01),
+//                LocalDate.of(2021, 02, 03), cli1);
+//
+//        if (camp2.getDataFimVigencia().isEqual(camp3.getDataFimVigencia())) {
+//            LocalDate dataAuxiliar = camp2.getDataFimVigencia();
+//            camp2.setDataFimVigencia(dataAuxiliar.plusDays(1));
+//        }
+//
+//        campanhaRepository.saveAll(Arrays.asList(camp1, camp2, camp3));
     }
 
 }

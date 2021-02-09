@@ -7,7 +7,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -33,6 +32,13 @@ public class Cliente {
 
     public Cliente(Long id, String nomeCompleto, String email, LocalDate dataNascimento, TimeCoracao meuTimeCoracao) {
         this.id = id;
+        this.nomeCompleto = nomeCompleto;
+        this.email = email;
+        this.dataNascimento = dataNascimento;
+        setMeuTimeCoracao(meuTimeCoracao);;
+    }
+
+    public Cliente(String nomeCompleto, String email, LocalDate dataNascimento, TimeCoracao meuTimeCoracao) {
         this.nomeCompleto = nomeCompleto;
         this.email = email;
         this.dataNascimento = dataNascimento;

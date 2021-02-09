@@ -1,7 +1,6 @@
 package com.example.democampanha.services;
 
 import com.example.democampanha.models.Campanha;
-import com.example.democampanha.models.Cliente;
 import com.example.democampanha.repositories.CampanhaRepository;
 import com.example.democampanha.services.exceptions.DatabaseException;
 import com.example.democampanha.services.exceptions.ResourceNotFoundException;
@@ -11,8 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

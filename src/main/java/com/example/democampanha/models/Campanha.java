@@ -5,6 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_campanhas")
@@ -25,16 +27,23 @@ public class Campanha {
 
         @ManyToMany
         @JoinColumn(name = "cliente_id")
-        private Cliente cliente;
+        private List<Cliente> cliente = new ArrayList<>();
 
         public Campanha(Long id, String nome, TimeCoracao timeCoracao, LocalDate dataInicioVigencia,
-                        LocalDate dataFimVigencia, Cliente cliente) {
+                        LocalDate dataFimVigencia) {
                 this.id = id;
                 this.nome = nome;
                 setTimeCoracao(timeCoracao);
                 this.dataInicioVigencia = dataInicioVigencia;
                 this.dataFimVigencia = dataFimVigencia;
-                this.cliente = cliente;
+        }
+
+        public Campanha(String nome, TimeCoracao timeCoracao, LocalDate dataInicioVigencia,
+                        LocalDate dataFimVigencia) {
+                this.nome = nome;
+                setTimeCoracao(timeCoracao);
+                this.dataInicioVigencia = dataInicioVigencia;
+                this.dataFimVigencia = dataFimVigencia;
         }
 
         private void setTimeCoracao(TimeCoracao timeCoracao) {

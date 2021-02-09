@@ -1,8 +1,13 @@
 package com.example.democampanha.resources;
 
+import ch.qos.logback.core.net.server.Client;
+import com.example.democampanha.dto.CampanhaResponse;
+import com.example.democampanha.dto.ClienteRequest;
+import com.example.democampanha.dto.ClienteResponse;
 import com.example.democampanha.models.Cliente;
 import com.example.democampanha.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,16 +35,14 @@ public class ClienteResource {
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> insert(@RequestBody Cliente obj){
+    public ResponseEntity<Cliente> insert(@RequestBody ClienteRequest obj){
         List<Cliente> list = clienteService.findAll();
-        boolean resp = validaExisteCadastroCliente(list, obj);
+        boolean resp = validaExisteCadastroCliente(list, obj.transformaClienteRequestParaCliente());
         if (resp){
             return ResponseEntity.ok().build();
         }else{
-            obj = clienteService.insert(obj);
-            URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").
-                      buildAndExpand(obj.getId()).toUri();
-            return ResponseEntity.created(uri).body(obj);
+            Cliente cliente = clienteService.insert(obj.transformaClienteRequestParaCliente());
+            return new ResponseEntity(ClienteResponse.transformaClienteEmClienteResponse(cliente), HttpStatus.CREATED);
         }
     }
 
@@ -50,9 +53,9 @@ public class ClienteResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente obj){
-        obj = clienteService.update(id, obj);
-        return ResponseEntity.ok().body(obj);
+    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody ClienteRequest obj){
+        Cliente cliente = clienteService.update(id, obj.transformaClienteRequestParaCliente());
+        return new ResponseEntity(ClienteResponse.transformaClienteEmClienteResponse(cliente), HttpStatus.OK);
     }
 
     private boolean validaExisteCadastroCliente(List<Cliente> list, Cliente obj){

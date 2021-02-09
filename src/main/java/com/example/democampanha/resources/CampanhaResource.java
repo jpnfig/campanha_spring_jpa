@@ -1,9 +1,12 @@
 package com.example.democampanha.resources;
 
+import com.example.democampanha.dto.CampanhaRequest;
+import com.example.democampanha.dto.CampanhaResponse;
 import com.example.democampanha.models.Campanha;
 import com.example.democampanha.models.Cliente;
 import com.example.democampanha.services.CampanhaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,11 +38,10 @@ public class CampanhaResource {
     }
 
     @PostMapping
-    public ResponseEntity<Campanha> insert(@RequestBody Campanha obj){
-        verificaDataCampanhasExistentes(obj);
-        obj = campanhaService.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).body(obj);
+    public ResponseEntity<Campanha> insert(@RequestBody CampanhaRequest obj){
+        verificaDataCampanhasExistentes(obj.transformaCampanhaRequestParaCampanha());
+        Campanha campanha = campanhaService.insert(obj.transformaCampanhaRequestParaCampanha());
+        return new ResponseEntity(CampanhaResponse.transformaCampanhaEmCampanhaResponse(campanha), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}")
@@ -49,9 +51,9 @@ public class CampanhaResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Campanha> update(@PathVariable Long id, @RequestBody Campanha obj){
-        obj = campanhaService.update(id, obj);
-        return ResponseEntity.ok().body(obj);
+    public ResponseEntity<Campanha> update(@PathVariable Long id, @RequestBody CampanhaRequest obj){
+        Campanha campanha = campanhaService.update(id, obj.transformaCampanhaRequestParaCampanha());
+        return new ResponseEntity(CampanhaResponse.transformaCampanhaEmCampanhaResponse(campanha), HttpStatus.OK);
     }
 
     private List<Campanha> verificaCampanhasVigentes(List<Campanha> list){
