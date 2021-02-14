@@ -10,45 +10,34 @@ import java.util.List;
 
 @Entity
 @Table(name = "tb_campanhas")
-@NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode(exclude={"nome", "dataInicioVigencia", "dataFimVigencia"})
-@ToString
+@Data
 public class Campanha {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
         private String nome;
-        private Integer idTimeCoracao;
         private LocalDate dataInicioVigencia;
         private LocalDate dataFimVigencia;
 
         @ManyToMany
-        @JoinColumn(name = "cliente_id")
+        @JoinTable(name = "tb_campanha_cliente",
+                joinColumns = @JoinColumn(
+                        name = "id_cliente",
+                        updatable = false,
+                        nullable = false,
+                        referencedColumnName = "id"),
+                inverseJoinColumns = @JoinColumn(
+                        name = "id_campanha",
+                        updatable = false,
+                        nullable = false,
+                        referencedColumnName = "id"
+                )
+        )
         private List<Cliente> cliente = new ArrayList<>();
 
-        public Campanha(Long id, String nome, TimeCoracao timeCoracao, LocalDate dataInicioVigencia,
-                        LocalDate dataFimVigencia) {
-                this.id = id;
-                this.nome = nome;
-                setTimeCoracao(timeCoracao);
-                this.dataInicioVigencia = dataInicioVigencia;
-                this.dataFimVigencia = dataFimVigencia;
-        }
+//      @ManyToOne
+        @Enumerated(EnumType.STRING)
+        private TimeCoracao timeCoracao;
 
-        public Campanha(String nome, TimeCoracao timeCoracao, LocalDate dataInicioVigencia,
-                        LocalDate dataFimVigencia) {
-                this.nome = nome;
-                setTimeCoracao(timeCoracao);
-                this.dataInicioVigencia = dataInicioVigencia;
-                this.dataFimVigencia = dataFimVigencia;
-        }
-
-        private void setTimeCoracao(TimeCoracao timeCoracao) {
-                if (timeCoracao != null) {
-                        this.idTimeCoracao = timeCoracao.getCode();
-                }
-        }
 }

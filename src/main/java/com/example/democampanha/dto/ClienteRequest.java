@@ -1,7 +1,5 @@
 package com.example.democampanha.dto;
 
-import com.example.democampanha.models.Campanha;
-import com.example.democampanha.models.Cliente;
 import com.example.democampanha.models.enums.TimeCoracao;
 import lombok.Data;
 
@@ -13,9 +11,6 @@ public class ClienteRequest {
     private String nomeCompleto;
     private String email;
     private LocalDate dataNascimento;
-    private Integer idMeuTimeCoracao;
+    private TimeCoracao timeCoracao;
 
-    public Cliente transformaClienteRequestParaCliente(){
-        return new Cliente(nomeCompleto, email, dataNascimento, TimeCoracao.valueOf(idMeuTimeCoracao));
-    }
 }

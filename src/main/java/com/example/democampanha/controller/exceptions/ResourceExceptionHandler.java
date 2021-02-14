@@ -1,4 +1,4 @@
-package com.example.democampanha.resources.exceptions;
+package com.example.democampanha.controller.exceptions;
 
 import com.example.democampanha.services.exceptions.DatabaseException;
 import com.example.democampanha.services.exceptions.ResourceNotFoundException;
