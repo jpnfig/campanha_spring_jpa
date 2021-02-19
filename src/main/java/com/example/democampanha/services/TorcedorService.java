@@ -10,11 +10,13 @@ import com.example.democampanha.services.exceptions.TorcedorAlreadyExistsExcepti
 import com.example.democampanha.services.exceptions.DatabaseException;
 import com.example.democampanha.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,9 +45,22 @@ public class TorcedorService {
     }
 
     public TorcedorResponse salvar(TorcedorRequest torcedorRequest){
+
         Torcedor torcedor = mapperTorcedorRequestToTorcedor.toEntity(torcedorRequest);
-        validaExisteCadastroTorcedor(torcedor);
-        TorcedorRepository.save(torcedor);
+        List<Torcedor> listaTorcedores = TorcedorRepository.findAll();
+
+        List<Torcedor> procuraTorcedor =
+                listaTorcedores.
+                        stream().
+                        filter(p -> p.getEmail().equals(torcedor.getEmail())).
+                        collect(Collectors.toList());
+
+        if (procuraTorcedor.isEmpty()){
+            TorcedorRepository.save(torcedor);
+        }else{
+            throw new TorcedorAlreadyExistsException(torcedor.getEmail());
+        }
+
         TorcedorResponse torcedorResponse = mapperTorcedorToTorcedorResponse.toResponse(torcedor);
         return torcedorResponse;
     }
@@ -62,8 +77,7 @@ public class TorcedorService {
 
     public TorcedorResponse atualizar(Long id, TorcedorRequest torcedorRequest){
         try{
-            Torcedor torcedor = new Torcedor();
-            torcedor = TorcedorRepository.getOne(id);
+            Torcedor torcedor = TorcedorRepository.getOne(id);
             torcedor = mapperTorcedorRequestToTorcedor.toEntity(torcedorRequest);
             TorcedorRepository.save(torcedor);
             TorcedorResponse torcedorResponse = new TorcedorResponse();
@@ -71,15 +85,6 @@ public class TorcedorService {
             return torcedorResponse;
         }catch(EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
-        }
-    }
-
-    private void validaExisteCadastroTorcedor(Torcedor torcedor){
-        List<Torcedor> listaTorcedores = TorcedorRepository.findAll();
-        for(Torcedor torcedores: listaTorcedores){
-            if (torcedores.getEmail().equals(torcedor.getEmail())){
-                throw new TorcedorAlreadyExistsException(torcedores.getIdTorcedor());
-            }
         }
     }
 

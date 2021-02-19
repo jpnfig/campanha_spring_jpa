@@ -30,18 +30,18 @@ public class CampanhaService {
     private final MapperCampanhaToCampanhaResponse mapperCampanhaToCampanhaResponse;
 
     public List<CampanhaResponse> buscarTodos() {
+
         List<Campanha> listaCampanhas = campanhaRepository.findAll();
+
+        listaCampanhas.removeIf(p -> p.getDataFimVigencia().isBefore(LocalDate.now()));
+
         List<CampanhaResponse> listaCampanhasResponses =
                 listaCampanhas
                         .stream()
                         .map(mapperCampanhaToCampanhaResponse::toResponse)
                         .collect(Collectors.toList());
-        return listaCampanhasResponses;
 
-//      Tratamento para não retornar campanhas já vencidas (implementar):
-//      if (lista.getDataFimVigencia().isAfter(LocalDate.now()) ||
-//          lista.getDataFimVigencia().isEqual(LocalDate.now())) {
-//      }
+        return listaCampanhasResponses;
 
     }
 
@@ -53,7 +53,13 @@ public class CampanhaService {
 
     public CampanhaResponse salvar(CampanhaRequest campanhaRequest){
         Campanha campanha = mapperCampanhaRequestToCampanha.toEntity(campanhaRequest);
-//      verificaDataCampanhasExistentes(campanha);
+        List<Campanha> listaCampanhas = campanhaRepository.findAll();
+        for (Campanha campanhas : listaCampanhas){
+            if (campanhas.getDataFimVigencia().isEqual(campanha.getDataFimVigencia())){
+                campanhas.setDataFimVigencia(campanhas.getDataFimVigencia().plusDays(1));
+                campanhaRepository.save(campanhas);
+            }
+        }
         campanhaRepository.save(campanha);
         CampanhaResponse campanhaResponse = mapperCampanhaToCampanhaResponse.toResponse(campanha);
         return campanhaResponse;
@@ -87,17 +93,6 @@ public class CampanhaService {
             return campanhaResponse;
         }catch(EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
-        }
-    }
-
-    private void verificaDataCampanhasExistentes(Campanha campanha) {
-        List<Campanha> listAux = campanhaRepository.findAll();
-        for(Campanha camp : listAux){
-            if (camp.getDataFimVigencia().isEqual(campanha.getDataFimVigencia())) {
-                LocalDate dataAuxiliar = camp.getDataFimVigencia();
-                camp.setDataFimVigencia(dataAuxiliar.plusDays(1));
-                campanhaRepository.save(camp);
-            }
         }
     }
 
