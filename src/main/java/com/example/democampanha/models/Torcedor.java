@@ -1,23 +1,19 @@
 package com.example.democampanha.models;
 
 import com.example.democampanha.models.enums.TimeCoracao;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "tb_clientes")
+@Table(name = "tb_torcedor")
 @Data
-public class Cliente {
+public class Torcedor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idTorcedor;
     private String nomeCompleto;
     private String email;
     private LocalDate dataNascimento;

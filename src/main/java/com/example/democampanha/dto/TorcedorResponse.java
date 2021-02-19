@@ -6,9 +6,9 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class ClienteResponse {
+public class TorcedorResponse {
 
-    private Long id;
+    private Long idTorcedor;
     private String nomeCompleto;
     private String email;
     private LocalDate dataNascimento;

@@ -3,19 +3,19 @@ package com.example.democampanha.controller;
 import com.example.democampanha.dto.CampanhaRequest;
 import com.example.democampanha.dto.CampanhaResponse;
 import com.example.democampanha.services.CampanhaService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/campanhas")
+@RequiredArgsConstructor
 public class CampanhaController {
 
-    @Autowired
-    private CampanhaService campanhaService;
+    private final CampanhaService campanhaService;
 
     @GetMapping
     public ResponseEntity<List<CampanhaResponse>> buscarTodos(){
@@ -32,6 +32,15 @@ public class CampanhaController {
     @PostMapping
     public ResponseEntity<CampanhaResponse> salvar(@RequestBody CampanhaRequest campanhaRequest){
         CampanhaResponse campanhaResponse = campanhaService.salvar(campanhaRequest);
+        return ResponseEntity.ok(campanhaResponse);
+    }
+
+//  /campanhas/1/adicionartorcedor/1
+    @PatchMapping("/{idCampanha}/adicionartorcedor/{idTorcedor}")
+    public ResponseEntity<CampanhaResponse> salvarCampanhaTorcedor(
+            @PathVariable Long idCampanha,
+            @PathVariable Long idTorcedor){
+        CampanhaResponse campanhaResponse = campanhaService.adicionarTorcedorACampanha(idCampanha, idTorcedor);
         return ResponseEntity.ok(campanhaResponse);
     }
 

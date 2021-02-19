@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class ClienteRequest {
+public class TorcedorRequest {
 
     private String nomeCompleto;
     private String email;

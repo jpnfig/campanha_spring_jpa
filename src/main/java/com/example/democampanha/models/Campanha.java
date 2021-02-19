@@ -9,32 +9,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "tb_campanhas")
+@Table(name = "tb_campanha")
 @Data
 public class Campanha {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+        private Long idCampanha;
         private String nome;
         private LocalDate dataInicioVigencia;
         private LocalDate dataFimVigencia;
 
         @ManyToMany
-        @JoinTable(name = "tb_campanha_cliente",
+        @JoinTable(name = "tb_campanha_torcedor",
                 joinColumns = @JoinColumn(
-                        name = "id_cliente",
-                        updatable = false,
-                        nullable = false,
-                        referencedColumnName = "id"),
-                inverseJoinColumns = @JoinColumn(
                         name = "id_campanha",
                         updatable = false,
                         nullable = false,
-                        referencedColumnName = "id"
+                        referencedColumnName = "idCampanha"),
+                inverseJoinColumns = @JoinColumn(
+                        name = "id_torcedor",
+                        updatable = false,
+                        nullable = false,
+                        referencedColumnName = "idTorcedor"
                 )
         )
-        private List<Cliente> cliente = new ArrayList<>();
+        private List<Torcedor> torcedores = new ArrayList<>();
 
 //      @ManyToOne
         @Enumerated(EnumType.STRING)
