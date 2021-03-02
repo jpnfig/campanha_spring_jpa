@@ -5,11 +5,9 @@ import com.example.democampanha.dto.CampanhaResponse;
 import com.example.democampanha.models.enums.TimeCoracao;
 import com.example.democampanha.services.CampanhaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Enumerated;
 import java.util.List;
 
 @RestController
@@ -31,7 +29,7 @@ public class CampanhaController {
         return ResponseEntity.ok().body(campanhaResponse);
     }
 
-    @GetMapping(value = "/{timeCoracao}")
+    @GetMapping(value = "/time/{timeCoracao}")
     public ResponseEntity<List<CampanhaResponse>> buscarPorTimeCoracao(@PathVariable TimeCoracao timeCoracao){
         List<CampanhaResponse> list = campanhaService.buscarPorTimeCoracao(timeCoracao);
         return ResponseEntity.ok().body(list);

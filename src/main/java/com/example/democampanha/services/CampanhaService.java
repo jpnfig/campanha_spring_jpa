@@ -32,7 +32,6 @@ public class CampanhaService {
     private final MapperCampanhaToCampanhaResponse mapperCampanhaToCampanhaResponse;
 
     public List<CampanhaResponse> buscarTodos() {
-
         List<Campanha> listaCampanhas = campanhaRepository.findAll();
         listaCampanhas.removeIf(p -> p.getDataFimVigencia().isBefore(LocalDate.now()));
 
@@ -41,9 +40,7 @@ public class CampanhaService {
                         .stream()
                         .map(mapperCampanhaToCampanhaResponse::toResponse)
                         .collect(Collectors.toList());
-
         return listaCampanhasResponses;
-
     }
 
     public CampanhaResponse buscarPorId(Long id){
@@ -58,19 +55,15 @@ public class CampanhaService {
 
     public List<CampanhaResponse> buscarPorTimeCoracao(TimeCoracao timeCoracao){
         try{
-
             List<Campanha> listaCampanhas = campanhaRepository.findAll();
             listaCampanhas.removeIf(p -> p.getDataFimVigencia().isBefore(LocalDate.now()));
             listaCampanhas.removeIf(p -> p.getTimeCoracao() != timeCoracao);
-
             List<CampanhaResponse> listaCampanhasResponses =
                     listaCampanhas
                             .stream()
                             .map(mapperCampanhaToCampanhaResponse::toResponse)
                             .collect(Collectors.toList());
-
             return listaCampanhasResponses;
-
         }catch(NoSuchElementException e) {
             throw new ResourceNotFoundException(timeCoracao);
         }
@@ -119,7 +112,7 @@ public class CampanhaService {
 
     private void validaDatasCampanhas(LocalDate dataFimVigencia) {
         int dias = 0;
-        LocalDate dataAtual = null, dataAnterior = null;
+        LocalDate dataAtual, dataAnterior = null;
         List<Campanha> listaCampanhas = campanhaRepository.findAll();
         for (Campanha campanhas : listaCampanhas){
             if (campanhas.getDataFimVigencia().isEqual(dataFimVigencia) ||
