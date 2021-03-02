@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,19 +30,24 @@ public class TorcedorService {
     private final MapperTorcedorToTorcedorResponse mapperTorcedorToTorcedorResponse;
 
     public List<TorcedorResponse> buscarTodos(){
-        List<Torcedor> listaTorcedores = TorcedorRepository.findAll();
-        List<TorcedorResponse> torcedoresResponses =
-                listaTorcedores
-                .stream()
-                .map(mapperTorcedorToTorcedorResponse::toResponse)
-                .collect(Collectors.toList());
-        return torcedoresResponses;
+            List<Torcedor> listaTorcedores = TorcedorRepository.findAll();
+            List<TorcedorResponse> torcedoresResponses =
+                    listaTorcedores
+                            .stream()
+                            .map(mapperTorcedorToTorcedorResponse::toResponse)
+                            .collect(Collectors.toList());
+            return torcedoresResponses;
     }
 
     public TorcedorResponse buscarPorId(Long id){
-        Torcedor torcedor = TorcedorRepository.findById(id).get();
-        TorcedorResponse TorcedorResponse = mapperTorcedorToTorcedorResponse.toResponse(torcedor);
-        return TorcedorResponse;
+        try{
+            Torcedor torcedor = TorcedorRepository.findById(id).get();
+            TorcedorResponse TorcedorResponse = mapperTorcedorToTorcedorResponse.toResponse(torcedor);
+            return TorcedorResponse;
+        }catch(NoSuchElementException e) {
+            throw new ResourceNotFoundException(id);
+        }
+
     }
 
     public TorcedorResponse salvar(TorcedorRequest torcedorRequest){
@@ -79,6 +85,7 @@ public class TorcedorService {
         try{
             Torcedor torcedor = TorcedorRepository.getOne(id);
             torcedor = mapperTorcedorRequestToTorcedor.toEntity(torcedorRequest);
+            torcedor.setIdTorcedor(id);
             TorcedorRepository.save(torcedor);
             TorcedorResponse torcedorResponse = new TorcedorResponse();
             torcedorResponse = mapperTorcedorToTorcedorResponse.toResponse(torcedor);

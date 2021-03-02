@@ -6,6 +6,7 @@ import com.example.democampanha.mappers.MapperCampanhaRequestToCampanha;
 import com.example.democampanha.mappers.MapperCampanhaToCampanhaResponse;
 import com.example.democampanha.models.Campanha;
 import com.example.democampanha.models.Torcedor;
+import com.example.democampanha.models.enums.TimeCoracao;
 import com.example.democampanha.repositories.CampanhaRepository;
 import com.example.democampanha.repositories.TorcedorRepository;
 import com.example.democampanha.services.exceptions.DatabaseException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +34,6 @@ public class CampanhaService {
     public List<CampanhaResponse> buscarTodos() {
 
         List<Campanha> listaCampanhas = campanhaRepository.findAll();
-
         listaCampanhas.removeIf(p -> p.getDataFimVigencia().isBefore(LocalDate.now()));
 
         List<CampanhaResponse> listaCampanhasResponses =
@@ -46,20 +47,38 @@ public class CampanhaService {
     }
 
     public CampanhaResponse buscarPorId(Long id){
-        Campanha campanha = campanhaRepository.findById(id).get();
-        CampanhaResponse campanhaResponse = mapperCampanhaToCampanhaResponse.toResponse(campanha);
-        return campanhaResponse;
+        try{
+            Campanha campanha = campanhaRepository.findById(id).get();
+            CampanhaResponse campanhaResponse = mapperCampanhaToCampanhaResponse.toResponse(campanha);
+            return campanhaResponse;
+        }catch(NoSuchElementException e) {
+            throw new ResourceNotFoundException(id);
+        }
+    }
+
+    public List<CampanhaResponse> buscarPorTimeCoracao(TimeCoracao timeCoracao){
+        try{
+
+            List<Campanha> listaCampanhas = campanhaRepository.findAll();
+            listaCampanhas.removeIf(p -> p.getDataFimVigencia().isBefore(LocalDate.now()));
+            listaCampanhas.removeIf(p -> p.getTimeCoracao() != timeCoracao);
+
+            List<CampanhaResponse> listaCampanhasResponses =
+                    listaCampanhas
+                            .stream()
+                            .map(mapperCampanhaToCampanhaResponse::toResponse)
+                            .collect(Collectors.toList());
+
+            return listaCampanhasResponses;
+
+        }catch(NoSuchElementException e) {
+            throw new ResourceNotFoundException(timeCoracao);
+        }
     }
 
     public CampanhaResponse salvar(CampanhaRequest campanhaRequest){
         Campanha campanha = mapperCampanhaRequestToCampanha.toEntity(campanhaRequest);
-        List<Campanha> listaCampanhas = campanhaRepository.findAll();
-        for (Campanha campanhas : listaCampanhas){
-            if (campanhas.getDataFimVigencia().isEqual(campanha.getDataFimVigencia())){
-                campanhas.setDataFimVigencia(campanhas.getDataFimVigencia().plusDays(1));
-                campanhaRepository.save(campanhas);
-            }
-        }
+        validaDatasCampanhas(campanha.getDataFimVigencia());
         campanhaRepository.save(campanha);
         CampanhaResponse campanhaResponse = mapperCampanhaToCampanhaResponse.toResponse(campanha);
         return campanhaResponse;
@@ -88,11 +107,36 @@ public class CampanhaService {
         try{
             Campanha campanha = campanhaRepository.getOne(id);
             campanha = mapperCampanhaRequestToCampanha.toEntity(campanhaRequest);
+            validaDatasCampanhas(campanha.getDataFimVigencia());
+            campanha.setIdCampanha(id);
             campanhaRepository.save(campanha);
             CampanhaResponse campanhaResponse = mapperCampanhaToCampanhaResponse.toResponse(campanha);
             return campanhaResponse;
         }catch(EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
+        }
+    }
+
+    private void validaDatasCampanhas(LocalDate dataFimVigencia) {
+        int dias = 0;
+        LocalDate dataAtual = null, dataAnterior = null;
+        List<Campanha> listaCampanhas = campanhaRepository.findAll();
+        for (Campanha campanhas : listaCampanhas){
+            if (campanhas.getDataFimVigencia().isEqual(dataFimVigencia) ||
+                campanhas.getDataFimVigencia().isAfter(dataFimVigencia)){
+                dias += 1;
+                dataAtual = campanhas.getDataFimVigencia().plusDays(dias);
+                if (dias > 1) {
+                    assert dataAnterior != null;
+                    if (dataAtual.isEqual(dataAnterior)) {
+                        dias += 1;
+                        dataAtual = campanhas.getDataFimVigencia().plusDays(dias);
+                    }
+                }
+                campanhas.setDataFimVigencia(dataAtual);
+                campanhaRepository.save(campanhas);
+                dataAnterior = dataAtual;
+            }
         }
     }
 
