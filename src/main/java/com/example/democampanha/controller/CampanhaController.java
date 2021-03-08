@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -36,7 +37,7 @@ public class CampanhaController {
     }
 
     @PostMapping
-    public ResponseEntity<CampanhaResponse> salvar(@RequestBody CampanhaRequest campanhaRequest){
+    public ResponseEntity<CampanhaResponse> salvar(@RequestBody @Valid CampanhaRequest campanhaRequest){
         CampanhaResponse campanhaResponse = campanhaService.salvar(campanhaRequest);
         return ResponseEntity.ok(campanhaResponse);
     }
@@ -59,7 +60,7 @@ public class CampanhaController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<CampanhaResponse> atualizar(
             @PathVariable Long id,
-            @RequestBody CampanhaRequest campanhaRequest){
+            @RequestBody @Valid CampanhaRequest campanhaRequest){
         CampanhaResponse campanhaResponse = campanhaService.atualizar(id, campanhaRequest);
         return ResponseEntity.ok(campanhaResponse);
     }

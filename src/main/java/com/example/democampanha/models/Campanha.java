@@ -1,6 +1,7 @@
 package com.example.democampanha.models;
 
 import com.example.democampanha.models.enums.TimeCoracao;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;

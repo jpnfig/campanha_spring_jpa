@@ -4,10 +4,10 @@ import com.example.democampanha.dto.TorcedorRequest;
 import com.example.democampanha.dto.TorcedorResponse;
 import com.example.democampanha.services.TorcedorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,7 +30,7 @@ public class TorcedorController {
     }
 
     @PostMapping
-    public ResponseEntity<TorcedorResponse> salvar(@RequestBody TorcedorRequest torcedorRequest){
+    public ResponseEntity<TorcedorResponse> salvar(@RequestBody @Valid TorcedorRequest torcedorRequest){
         TorcedorResponse torcedorResponse = torcedorService.salvar(torcedorRequest);
         return ResponseEntity.ok(torcedorResponse);
     }
@@ -44,7 +44,7 @@ public class TorcedorController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<TorcedorResponse> atualizar(
             @PathVariable Long id,
-            @RequestBody TorcedorRequest TorcedorRequest){
+            @RequestBody @Valid TorcedorRequest TorcedorRequest){
         TorcedorResponse TorcedorResponse = torcedorService.atualizar(id, TorcedorRequest);
         return ResponseEntity.ok(TorcedorResponse);
     }
