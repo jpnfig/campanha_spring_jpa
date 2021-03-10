@@ -30,6 +30,7 @@ public class CampanhaController {
         return ResponseEntity.ok().body(campanhaResponse);
     }
 
+//  /campanhas/time/SAO_PAULO
     @GetMapping(value = "/time/{timeCoracao}")
     public ResponseEntity<List<CampanhaResponse>> buscarPorTimeCoracao(@PathVariable TimeCoracao timeCoracao){
         List<CampanhaResponse> list = campanhaService.buscarPorTimeCoracao(timeCoracao);

@@ -10,13 +10,11 @@ import com.example.democampanha.services.exceptions.TorcedorAlreadyExistsExcepti
 import com.example.democampanha.services.exceptions.DatabaseException;
 import com.example.democampanha.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
