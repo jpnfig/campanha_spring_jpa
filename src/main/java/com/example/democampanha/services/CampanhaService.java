@@ -9,6 +9,7 @@ import com.example.democampanha.models.Torcedor;
 import com.example.democampanha.models.enums.TimeCoracao;
 import com.example.democampanha.repositories.CampanhaRepository;
 import com.example.democampanha.repositories.TorcedorRepository;
+import com.example.democampanha.services.exceptions.AssociationAlreadyExistsException;
 import com.example.democampanha.services.exceptions.DatabaseException;
 import com.example.democampanha.services.exceptions.InvalidAssociationException;
 import com.example.democampanha.services.exceptions.ResourceNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -81,11 +83,17 @@ public class CampanhaService {
     public CampanhaResponse adicionarTorcedorACampanha(Long idCampanha,  Long idTorcedor){
         Torcedor torcedor= torcedorRepository.findById(idTorcedor).get();
         Campanha campanha = campanhaRepository.findById(idCampanha).get();
+        List<Torcedor> torcedores = campanha.getTorcedores();
         if (torcedor.getTimeCoracao() == campanha.getTimeCoracao()){
+            for (Torcedor listaTorcedores : torcedores){
+                if (listaTorcedores.getIdTorcedor() == idTorcedor){
+                    throw new AssociationAlreadyExistsException(idCampanha, idTorcedor);
+                }
+            }
             campanha.getTorcedores().add(torcedor);
             campanhaRepository.save(campanha);
             CampanhaResponse campanhaResponse = mapperCampanhaToCampanhaResponse.toResponse(campanha);
-            return  campanhaResponse;
+            return campanhaResponse;
         }else{
             throw new InvalidAssociationException(torcedor.getTimeCoracao(), campanha.getTimeCoracao());
         }

@@ -1,9 +1,6 @@
 package com.example.democampanha.controller.exceptions;
 
-import com.example.democampanha.services.exceptions.InvalidAssociationException;
-import com.example.democampanha.services.exceptions.TorcedorAlreadyExistsException;
-import com.example.democampanha.services.exceptions.DatabaseException;
-import com.example.democampanha.services.exceptions.ResourceNotFoundException;
+import com.example.democampanha.services.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -44,7 +41,7 @@ public class ResourceExceptionHandler {
     }
 
     @ExceptionHandler(TorcedorAlreadyExistsException.class)
-    public ResponseEntity<StandardError> clientAlreadyExists(TorcedorAlreadyExistsException e,
+    public ResponseEntity<StandardError> torcedorAlreadyExists(TorcedorAlreadyExistsException e,
                                                              HttpServletRequest request){
         String error = "Database error";
         HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -57,7 +54,20 @@ public class ResourceExceptionHandler {
     }
 
     @ExceptionHandler(InvalidAssociationException.class)
-    public ResponseEntity<StandardError> clientAlreadyExists(InvalidAssociationException e,
+    public ResponseEntity<StandardError> invalidAssociation(InvalidAssociationException e,
+                                                             HttpServletRequest request){
+        String error = "Validation error";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(Instant.now(),
+                status.value(),
+                error,
+                e.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(AssociationAlreadyExistsException.class)
+    public ResponseEntity<StandardError> associationAlreadyExists(AssociationAlreadyExistsException e,
                                                              HttpServletRequest request){
         String error = "Validation error";
         HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -70,38 +80,40 @@ public class ResourceExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<StandardError> validationRequest(MethodArgumentNotValidException e,
+    public ResponseEntity<StandardError> validationFieldsRequest(MethodArgumentNotValidException e,
                                                            HttpServletRequest request){
         String error = "Validation error";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(Instant.now(),
                 status.value(),
                 error,
-                "Falha na validação dos campos de entrada",
+                "Falha na validação da campanha, campo não pode ser nulo.",
                 request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<StandardError> validationData(HttpMessageNotReadableException e, HttpServletRequest request){
+    public ResponseEntity<StandardError> validationDataRequest(HttpMessageNotReadableException e,
+                                                               HttpServletRequest request){
         String error = "Validation error";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(Instant.now(),
                 status.value(),
                 error,
-                "Falha na validação dos campos de entrada",
+                "Falha na validação da campanha, formato de data inválido.",
                 request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<StandardError> validationRequest(NoSuchElementException e, HttpServletRequest request){
+    public ResponseEntity<StandardError> validationAssociationRequest(NoSuchElementException e,
+                                                                      HttpServletRequest request){
         String error = "Database error";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err = new StandardError(Instant.now(),
                 status.value(),
                 error,
-                "Falha na associação da campanha ao torcedor",
+                "Falha na associação, verifique a campanha e o torcedor.",
                 request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
