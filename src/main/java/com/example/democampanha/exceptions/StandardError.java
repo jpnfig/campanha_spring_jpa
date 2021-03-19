@@ -1,4 +1,4 @@
-package com.example.democampanha.controller.exceptions;
+package com.example.democampanha.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

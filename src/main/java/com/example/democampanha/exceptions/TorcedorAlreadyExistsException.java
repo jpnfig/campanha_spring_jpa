@@ -1,4 +1,4 @@
-package com.example.democampanha.services.exceptions;
+package com.example.democampanha.exceptions;
 
 public class TorcedorAlreadyExistsException extends RuntimeException {
 

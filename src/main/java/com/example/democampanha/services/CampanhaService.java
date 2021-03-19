@@ -1,5 +1,6 @@
 package com.example.democampanha.services;
 
+import com.example.democampanha.exceptions.*;
 import com.example.democampanha.dto.CampanhaRequest;
 import com.example.democampanha.dto.CampanhaResponse;
 import com.example.democampanha.mappers.MapperCampanhaRequestToCampanha;
@@ -9,10 +10,6 @@ import com.example.democampanha.models.Torcedor;
 import com.example.democampanha.models.enums.TimeCoracao;
 import com.example.democampanha.repositories.CampanhaRepository;
 import com.example.democampanha.repositories.TorcedorRepository;
-import com.example.democampanha.services.exceptions.AssociationAlreadyExistsException;
-import com.example.democampanha.services.exceptions.DatabaseException;
-import com.example.democampanha.services.exceptions.InvalidAssociationException;
-import com.example.democampanha.services.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -73,6 +70,7 @@ public class CampanhaService {
     }
 
     public CampanhaResponse salvar(CampanhaRequest campanhaRequest){
+        validarDatas(campanhaRequest);
         Campanha campanha = mapperCampanhaRequestToCampanha.toEntity(campanhaRequest);
         validaDatasCampanhas(campanha.getDataFimVigencia());
         campanhaRepository.save(campanha);
@@ -111,6 +109,7 @@ public class CampanhaService {
 
     public CampanhaResponse atualizar(Long id, CampanhaRequest campanhaRequest){
         try{
+            validarDatas(campanhaRequest);
             Campanha campanha = campanhaRepository.getOne(id);
             campanha = mapperCampanhaRequestToCampanha.toEntity(campanhaRequest);
             validaDatasCampanhas(campanha.getDataFimVigencia());
@@ -120,6 +119,25 @@ public class CampanhaService {
             return campanhaResponse;
         }catch(EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
+        }
+    }
+
+    private void validarDatas(CampanhaRequest campanhaRequest) {
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        try {
+            LocalDate dataInicioVigencia = LocalDate.parse(campanhaRequest.getDataInicioVigencia(), dateTimeFormatter);
+            campanhaRequest.setDataInicioVigencia(String.valueOf(dataInicioVigencia));
+        } catch (Exception e) {
+            throw new DataNotValidException("Data de inicio da vigência inválida");
+        }
+
+        try {
+            LocalDate dataFimVigencia = LocalDate.parse(campanhaRequest.getDataFimVigencia(), dateTimeFormatter);
+            campanhaRequest.setDataFimVigencia((String.valueOf(dataFimVigencia)));
+        } catch (Exception e) {
+            throw new DataNotValidException("Data de término da vigência inválida");
         }
     }
 

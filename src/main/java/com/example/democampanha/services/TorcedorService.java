@@ -2,19 +2,22 @@ package com.example.democampanha.services;
 
 import com.example.democampanha.dto.TorcedorRequest;
 import com.example.democampanha.dto.TorcedorResponse;
+import com.example.democampanha.exceptions.DataNotValidException;
+import com.example.democampanha.exceptions.DatabaseException;
 import com.example.democampanha.mappers.MapperTorcedorRequestToTorcedor;
 import com.example.democampanha.mappers.MapperTorcedorToTorcedorResponse;
 import com.example.democampanha.repositories.TorcedorRepository;
 import com.example.democampanha.models.Torcedor;
-import com.example.democampanha.services.exceptions.TorcedorAlreadyExistsException;
-import com.example.democampanha.services.exceptions.DatabaseException;
-import com.example.democampanha.services.exceptions.ResourceNotFoundException;
+import com.example.democampanha.exceptions.TorcedorAlreadyExistsException;
+import com.example.democampanha.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -49,7 +52,7 @@ public class TorcedorService {
     }
 
     public TorcedorResponse salvar(TorcedorRequest torcedorRequest){
-
+        validarData(torcedorRequest);
         Torcedor torcedor = mapperTorcedorRequestToTorcedor.toEntity(torcedorRequest);
         List<Torcedor> listaTorcedores = TorcedorRepository.findAll();
 
@@ -81,6 +84,7 @@ public class TorcedorService {
 
     public TorcedorResponse atualizar(Long id, TorcedorRequest torcedorRequest){
         try{
+            validarData(torcedorRequest);
             Torcedor torcedor = TorcedorRepository.getOne(id);
             torcedor = mapperTorcedorRequestToTorcedor.toEntity(torcedorRequest);
             torcedor.setIdTorcedor(id);
@@ -90,6 +94,18 @@ public class TorcedorService {
             return torcedorResponse;
         }catch(EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
+        }
+    }
+
+    private void validarData(TorcedorRequest torcedorRequest) {
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        try {
+            LocalDate dataNascimento = LocalDate.parse(torcedorRequest.getDataNascimento(), dateTimeFormatter);
+            torcedorRequest.setDataNascimento(String.valueOf(dataNascimento));
+        } catch (Exception e) {
+            throw new DataNotValidException("Data de nascimento inválida");
         }
     }
 
